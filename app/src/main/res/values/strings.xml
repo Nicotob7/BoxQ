@@ -2,4 +2,14 @@
     <string name="app_name">BoxQ</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    
+    <string name="default_web_client_id" translatable="false">444706257303-0c3jl7j6g6mioua9055hopf8m4caqie5.apps.googleusercontent.com</string>
+    <string name="iniciar_sesi_n_con_google">Iniciar sesión con Google</string>
+    <string name="todo">TODO</string>
+    <string name="registrarme">Registrarme</string>
+    <string name="no_tienes_una_cuenta">No tienes una cuenta?</string>
+    <string name="ingresar">Ingresar</string>
+    <string name="contrase_a">Contraseña</string>
+    <string name="correo">Correo</string>
+    <string name="iniciar_sesi_n">Iniciar Sesión</string>
 </resources>

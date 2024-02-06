@@ -27,49 +27,102 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="Iniciar Sesión"
+                android:text="@string/iniciar_sesi_n"
                 android:textSize="48sp"
                 android:textStyle="bold" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="25dp" />
 
             <EditText
                 android:id="@+id/Correo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:autofillHints=""
                 android:ems="10"
-                android:hint="Correo"
-                android:inputType="text" />
+                android:hint="@string/correo"
+                android:inputType="text"
+                android:minHeight="48dp" />
 
             <EditText
                 android:id="@+id/contraseña"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:autofillHints=""
                 android:ems="10"
-                android:hint="Contraseña"
-                android:inputType="textPassword" />
+                android:hint="@string/contrase_a"
+                android:inputType="textPassword"
+                android:minHeight="48dp" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="15dp" />
 
             <Button
                 android:id="@+id/btn_ingresar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:backgroundTint="#7C4DFF"
-                android:text="Ingresar"
+                android:text="@string/ingresar"
                 app:cornerRadius="10dp" />
 
-            <Button
-                android:id="@+id/btn_register"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:backgroundTint="#3F51B5"
-                android:text="Registrarme"
-                app:cornerRadius="10dp" />
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/btn_anonymus"
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/no_tienes_una_cuenta"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/btn_register"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:backgroundTint="@android:color/transparent"
+                    android:text="@string/registrarme"
+                    android:textColor="#304FFE"
+                    android:textSize="10sp"
+                    android:textStyle="normal"
+                    app:cornerRadius="10dp"
+                    tools:ignore="SmallSp" />
+            </LinearLayout>
+
+            <Space
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:backgroundTint="#009688"
-                android:text="Visitante"
-                app:cornerRadius="10dp" />
+                android:layout_height="25dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:visibility="visible">
+
+                <ImageView
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:src="@drawable/chrome_svgrepo_com"
+                    android:contentDescription="@string/todo" />
+
+                <Button
+                    android:id="@+id/btn_google"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:backgroundTint="#D1D1D1"
+                    android:text="@string/iniciar_sesi_n_con_google"
+                    android:textColor="#000000"
+                    android:textSize="12sp"
+                    android:textStyle="normal"
+                    app:cornerRadius="10dp" />
+            </LinearLayout>
+
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

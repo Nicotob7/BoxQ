@@ -23,6 +23,23 @@
             android:orientation="vertical"
             android:padding="10dp">
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Registro"
+                android:textSize="34sp"
+                android:textStyle="bold" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="25dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Nombre y Apellido" />
+
             <EditText
                 android:id="@+id/name_correo"
                 android:layout_width="match_parent"
@@ -38,6 +55,12 @@
                 android:ems="10"
                 android:hint="Correo"
                 android:inputType="text" />
+
+            <TextView
+                android:id="@+id/textView12"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Minimo 6 caracteres" />
 
             <EditText
                 android:id="@+id/contraseña"
@@ -57,6 +80,11 @@
                 android:layout_height="wrap_content"
                 android:text="Registrarme"
                 app:cornerRadius="10dp" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="25dp" />
+
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>
