@@ -19,12 +19,45 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center|center_vertical"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/toodooo"
+                android:padding="24dp"
+                app:srcCompat="@drawable/btn_back" />
+
+            <TextView
+                android:id="@+id/dia"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/dia" />
+
+            <ImageButton
+                android:id="@+id/next"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#D5D6D6"
+                android:contentDescription="@string/todooo"
+                android:padding="24dp"
+                app:srcCompat="@drawable/btn_next" />
+
+        </LinearLayout>
+
         <Button
             android:id="@+id/btn_close"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="#D50000"
-            android:text="Cerrar sesión"
+            android:text="@string/cerrar_sesi_n"
             app:cornerRadius="10dp" />
 
         <Button
@@ -32,7 +65,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="#00695C"
-            android:text="Button malo"
+            android:text="@string/button_perfil"
             app:cornerRadius="10dp" />
 
         <Button
@@ -40,12 +73,17 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="#3D5AFE"
-            android:text="Agregar con Fragment"
+            android:text="@string/agregar_con_fragment"
             app:cornerRadius="10dp" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="15dp" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewSingle"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
     </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

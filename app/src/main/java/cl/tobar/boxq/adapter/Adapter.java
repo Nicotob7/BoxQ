@@ -16,8 +16,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -49,7 +47,7 @@ public class Adapter extends FirestoreRecyclerAdapter<Box, Adapter.ViewHolder>{
     @Override
     protected void onBindViewHolder(@NonNull ViewHolder viewHolder, int i, @NonNull Box Box) {
 
-        DocumentSnapshot documentSnapshot = getSnapshots().getSnapshot(viewHolder.getAbsoluteAdapterPosition());
+        DocumentSnapshot documentSnapshot = getSnapshots().getSnapshot(viewHolder.getBindingAdapterPosition());
         final String id = documentSnapshot.getId();
 
         viewHolder.name.setText(Box.getName());
@@ -58,53 +56,36 @@ public class Adapter extends FirestoreRecyclerAdapter<Box, Adapter.ViewHolder>{
         viewHolder.mod.setText(Box.getMod());
 
         //Aqui se crea el metodo de editar con nueva layout (Desactivado para usar Fragment)
-        viewHolder.btn_edit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(activity, Create.class);
-                i.putExtra("id_ejer", id);
-                //activity.startActivity(i);
+        viewHolder.btn_edit.setOnClickListener(v -> {
+            Intent i1 = new Intent(activity, Create.class);
+            i1.putExtra("id_ejer", id);
+            //activity.startActivity(i);
 
-                CreateFragment createFragment = new CreateFragment();
-                Bundle bundle = new Bundle();
-                bundle.putString("id_ejer", id);
-                createFragment.setArguments(bundle);
-                createFragment.show(fm, "open fragment");
-            }
+            CreateFragment createFragment = new CreateFragment();
+            Bundle bundle = new Bundle();
+            bundle.putString("id_ejer", id);
+            createFragment.setArguments(bundle);
+            createFragment.show(fm, "open fragment");
         });
 
 
 
 
         //Aqui se crea el metodo para eliminar
-        viewHolder.btn_delete.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-
-                deleteBox(id);
-            }
-        });
+        viewHolder.btn_delete.setOnClickListener(v -> deleteBox(id));
 
     }
 
     //Aqui muestra el mensaje correspondiente, se compara el activity por si es null
     private void deleteBox(String id) {
-        mFirestore.collection("Pet").document(id).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void unused) {
-                if (activity != null) {
-                Toast.makeText(activity, "Eliminado Correctamente", Toast.LENGTH_SHORT).show();
-            }}
-            //Excepcion de errores
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(activity, "Error al eliminar", Toast.LENGTH_SHORT).show();
-            }
-        });
+        //Excepcion de errores
+        mFirestore.collection("Pet").document(id).delete().addOnSuccessListener(unused -> {
+            if (activity != null) {
+            Toast.makeText(activity, "Eliminado Correctamente", Toast.LENGTH_SHORT).show();
+        }}).addOnFailureListener(e -> Toast.makeText(activity, "Error al eliminar", Toast.LENGTH_SHORT).show());
     }
 
-    //Muestra los datos obtenidos en view_pet_single.xml
+    //Muestra los datos obtenidos en view_single.xml
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -113,7 +94,7 @@ public class Adapter extends FirestoreRecyclerAdapter<Box, Adapter.ViewHolder>{
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView name, weight, repe, mod;
+        TextView name, repe, weight, mod;
 
         ImageView btn_delete, btn_edit;
 

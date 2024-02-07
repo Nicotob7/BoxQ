@@ -27,7 +27,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="Registro"
+                android:text="@string/registro"
                 android:textSize="34sp"
                 android:textStyle="bold" />
 
@@ -38,23 +38,27 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Nombre y Apellido" />
+                android:text="@string/nombre_y_apellido" />
 
             <EditText
                 android:id="@+id/name_correo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:autofillHints=""
                 android:ems="10"
-                android:hint="Nombre"
-                android:inputType="text" />
+                android:hint="@string/nombre"
+                android:inputType="text"
+                android:padding="24dp" />
 
             <EditText
                 android:id="@+id/correo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:hint="Correo"
-                android:inputType="text" />
+                android:hint="@string/correoo"
+                android:inputType="text"
+                android:padding="24dp"
+                android:autofillHints="" />
 
             <TextView
                 android:id="@+id/textView12"
@@ -66,9 +70,11 @@
                 android:id="@+id/contraseña"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:autofillHints=""
                 android:ems="10"
-                android:hint="Contraseña"
-                android:inputType="textPassword" />
+                android:hint="@string/contrase_aa"
+                android:inputType="textPassword"
+                android:padding="24dp" />
 
             <Space
                 android:layout_width="match_parent"
@@ -78,7 +84,7 @@
                 android:id="@+id/btn_registro"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Registrarme"
+                android:text="@string/registrarmee"
                 app:cornerRadius="10dp" />
 
             <Space

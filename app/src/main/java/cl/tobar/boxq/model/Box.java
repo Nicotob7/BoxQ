@@ -1,15 +1,18 @@
 package cl.tobar.boxq.model;
 
 public class Box {
+    String id;
     String name, repe, weight, mod;
     public Box(){}
 
-    public Box(String name, String weight, String repe, String mod){
+    public Box(String id, String name, String weight, String repe, String mod){
+        this.id = id;
         this.name = name;
         this.repe = repe;
         this.weight = weight;
         this.mod = mod;
     }
+
 
     public String getName() {
         return name;
