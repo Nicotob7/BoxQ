@@ -16,6 +16,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
@@ -27,7 +28,7 @@ public class RegisterActivity extends AppCompatActivity {
     Button btn_register;
     EditText name, email, password;
 
-
+    FirebaseDatabase database;
     FirebaseFirestore mFirestore;
     FirebaseAuth mAuth;
 
@@ -38,6 +39,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         mFirestore = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
+        database = FirebaseDatabase.getInstance();
 
 
         name = findViewById(R.id.name_correo);
@@ -63,39 +65,50 @@ public class RegisterActivity extends AppCompatActivity {
             }
 
             private void registerUser(String nameUser, String emailUser, String passUser) {
-                mAuth.createUserWithEmailAndPassword(emailUser, passUser).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        //String id = mAuth.getCurrentUser().getUid();
-                        String id = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
-
-                        Map<String, Object> map = new HashMap<>();
-
-                        map.put("id", id);
-                        map.put("name", nameUser);
-                        map.put("email", emailUser);
-                        map.put("password", passUser);
-
-                        mFirestore.collection("user").document(id).set(map).addOnSuccessListener(new OnSuccessListener<Void>() {
+                mAuth.createUserWithEmailAndPassword(emailUser, passUser)
+                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
-                            public void onSuccess(Void unused) {
-                                finish();
-                                startActivity(new Intent(RegisterActivity.this, MainActivity.class));
-                                Toast.makeText(RegisterActivity.this, "Usuario Registrado con éxito", Toast.LENGTH_SHORT).show();
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Toast.makeText(RegisterActivity.this, "Error al guardar", Toast.LENGTH_SHORT).show();
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (task.isSuccessful()) {
+                                    // Obtener el ID único del usuario registrado
+                                    String userId = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
+
+                                    // Crear un mapa con los datos del usuario
+                                    Map<String, Object> map = new HashMap<>();
+                                    map.put("id", userId);
+                                    map.put("name", nameUser);
+                                    map.put("email", emailUser);
+                                    map.put("password", passUser);
+
+                                    database.getReference().child("users").child(userId).setValue(map);
+                                    mFirestore.collection("user").document(userId).set(map);
+
+                                    // Guardar los datos del usuario en Firestore bajo una colección con el ID del usuario
+                                    mFirestore.collection(userId).document("profile").set(map)
+
+
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    // Éxito al guardar en Firestore
+                                                    finish();
+                                                    startActivity(new Intent(RegisterActivity.this, MainActivity.class));
+                                                    Toast.makeText(RegisterActivity.this, "Usuario Registrado con éxito", Toast.LENGTH_SHORT).show();
+                                                }
+                                            })
+                                            .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    // Error al guardar en Firestore
+                                                    Toast.makeText(RegisterActivity.this, "Error al guardar", Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+                                } else {
+                                    // Error al registrar al usuario
+                                    Toast.makeText(RegisterActivity.this, "Error al registrar", Toast.LENGTH_SHORT).show();
+                                }
                             }
                         });
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(RegisterActivity.this, "Error al registrar", Toast.LENGTH_SHORT).show();
-                    }
-                });
             }
         });
 

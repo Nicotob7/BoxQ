@@ -25,14 +25,6 @@
             android:gravity="center|center_vertical"
             android:orientation="horizontal">
 
-            <ImageButton
-                android:id="@+id/back"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:contentDescription="@string/toodooo"
-                android:padding="24dp"
-                app:srcCompat="@drawable/btn_back" />
-
             <TextView
                 android:id="@+id/dia"
                 android:layout_width="0dp"
@@ -40,15 +32,6 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="@string/dia" />
-
-            <ImageButton
-                android:id="@+id/next"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:backgroundTint="#D5D6D6"
-                android:contentDescription="@string/todooo"
-                android:padding="24dp"
-                app:srcCompat="@drawable/btn_next" />
 
         </LinearLayout>
 
@@ -83,7 +66,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewSingle"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

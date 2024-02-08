@@ -18,6 +18,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
@@ -151,7 +152,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void firebaseAuth(String idToken) {
-
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -159,17 +159,35 @@ public class LoginActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()){
                             FirebaseUser user = mAuth.getCurrentUser();
+                            String userId = user.getUid(); // Obtener el ID único del usuario
+
+                            // Crear un mapa con los datos del usuario
                             HashMap<String, Object> map = new HashMap<>();
-                            map.put("id", user.getUid());
+                            map.put("id", userId);
                             map.put("name", user.getDisplayName());
                             map.put("profile", user.getPhotoUrl().toString());
 
-                            database.getReference().child("users").child(user.getUid()).setValue(map);
+                            // Guardar los datos del usuario en Realtime Database
+                            database.getReference().child("users").child(userId).setValue(map);
                             mFirestore.collection("user").document(user.getUid()).set(map);
 
-                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                            startActivity(intent);
-
+                            // Guardar los datos del usuario en Firestore bajo una colección con el ID del usuario
+                            mFirestore.collection(userId).document("profile").set(map)
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            // Éxito al guardar en Firestore
+                                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                            startActivity(intent);
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            // Error al guardar en Firestore
+                                            Toast.makeText(LoginActivity.this, "Error al guardar en Firestore", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
                         }
                         else {
                             Toast.makeText(LoginActivity.this, "Error al acceder", Toast.LENGTH_SHORT).show();
@@ -177,6 +195,8 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 });
     }
+
+
 
     private void loginAnonymus() {
                 mAuth.signInAnonymously()

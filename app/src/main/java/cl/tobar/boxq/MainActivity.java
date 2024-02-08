@@ -9,11 +9,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
@@ -25,13 +25,11 @@ import cl.tobar.boxq.model.Box;
 public class MainActivity extends AppCompatActivity {
 
     Button btn_add, btn_add_frag, btn_exit;
-    ImageButton btn_back, btn_next;
     RecyclerView mRecycler;
     Adapter mAdapter;
     FirebaseFirestore mFirestore;
     FirebaseAuth mAuth;
     Query query;
-    int contador = 0;
 
     private TextView dateTextView;
 
@@ -41,7 +39,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         this.setTitle("Agregar ejercicio");
-
 
         dateTextView = findViewById(R.id.dia);
         updateDateTextView();
@@ -55,9 +52,6 @@ public class MainActivity extends AppCompatActivity {
         btn_add = findViewById(R.id.btn_add);
         btn_add_frag = findViewById(R.id.btn_add_frag);
         btn_exit = findViewById(R.id.btn_close);
-
-        btn_back = findViewById(R.id.back);
-        btn_next = findViewById(R.id.next);
 
         //Cuando se hace click se abre la nueva actividad
         btn_add.setOnClickListener(view -> startActivity(new Intent(MainActivity.this, Create.class)));
@@ -74,30 +68,6 @@ public class MainActivity extends AppCompatActivity {
             finish();
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
         });
-
-        //Button para ver registro en relacion a la fecha con maximo de 7 dias
-        btn_back.setOnClickListener(view -> {
-            if (contador > -6) {
-                contador--;
-                adjustDate(contador);
-                Log.d("Contador", "Contador actual: " + contador);
-            }
-        });
-
-        //Button para ver registro, Contador limitado a 0 para actualizarlo al dia
-        btn_next.setOnClickListener(view -> {
-            if (contador < 0) { //Contador con limite de 7 dias
-                contador++;
-                adjustDate(contador);
-                Log.d("Contador", "Contador actual: " + contador);
-            }
-        });
-    }
-
-    private void adjustDate(int days) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_MONTH, days);
-        updateDateTextView(calendar);
     }
 
     private void updateDateTextView() {
@@ -107,30 +77,31 @@ public class MainActivity extends AppCompatActivity {
     //Actualiza el TextView con el día de la semana, el día del mes y el nombre del mes
     @SuppressLint("SetTextI18n")
     private void updateDateTextView(Calendar calendar) {
+        //Se obtenemos el día de la semana actual y el día del mes
         int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
-        String dayName = getDayName(dayOfWeek);
         int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+
+        //Calcula el número del día lunes y el día domingo (Para decir semana desde tanto tanto)
+        int mondayDayOfMonth = dayOfMonth - (dayOfWeek - Calendar.MONDAY);
+        int sundayDayOfMonth = dayOfMonth + (Calendar.SUNDAY - dayOfWeek + (dayOfWeek == Calendar.SUNDAY ? 0 : 7));
+
+        //Nombre del mes
         String monthName = getMonthName(calendar.get(Calendar.MONTH));
 
-        //Establece el texto en el TextView (dia)
-        dateTextView.setText(dayName + ", " + dayOfMonth + " de " + monthName);
+        //Texto en el TextView (dia)
+        dateTextView.setText("Semana del " + mondayDayOfMonth + " - al " + sundayDayOfMonth + " de " + monthName);
     }
 
-    //Método para obtener el nombre del mes a partir del número de mes
+    //Método para obtener el nombre del mes a partir del número de mes (De seguro hay algo mas facil)
     private String getMonthName(int month) {
         String[] monthNames = new String[]{"enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"};
         return monthNames[month];
     }
 
-    private String getDayName(int dayOfWeek) {
-        String[] dayNames = new String[]{"Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"};
-        return dayNames[dayOfWeek - 1];
-    }
-
     @Override
     protected void onStart() {
         super.onStart();
-        // Verifica si mAdapter no es nulo antes de llamar a startListening()
+        //Verifica si mAdapter no es nulo antes de llamar a startListening()
         if (mAdapter != null) {
             mAdapter.startListening();
         }
@@ -140,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        // Verifica si mAdapter no es nulo antes de llamar a stopListening()
+        //Verifica si mAdapter no es nulo antes de llamar a stopListening()
         if (mAdapter != null) {
             mAdapter.stopListening();
         }
@@ -152,16 +123,20 @@ public class MainActivity extends AppCompatActivity {
         mRecycler = findViewById(R.id.recyclerViewSingle);
         mRecycler.setLayoutManager(new LinearLayoutManager(this));
         mRecycler.setItemAnimator(null);
-        //Query query = mFirestore.collection("pet").whereEqualTo("id_user", mAuth.getCurrentUser().getUid());
-        query = mFirestore.collection("Pet");
+
+        // ID del usuario actualmente autenticado en la APP
+        String userId = mAuth.getCurrentUser().getUid();
+
+        // Filtra la colección del usuario actual (por su id) y excluye el documento "profile"
+        query = mFirestore.collection(userId).whereNotEqualTo(FieldPath.documentId(), "profile");
+
         FirestoreRecyclerOptions<Box> firestoreRecyclerOptions =
-               new FirestoreRecyclerOptions.Builder<Box>()
+                new FirestoreRecyclerOptions.Builder<Box>()
                         .setQuery(query, Box.class)
                         .build();
 
-
-        mAdapter = new Adapter(firestoreRecyclerOptions, this, getSupportFragmentManager());
-        mAdapter.notifyDataSetChanged();
+        mAdapter = new Adapter(firestoreRecyclerOptions, this, getSupportFragmentManager(), userId);
         mRecycler.setAdapter(mAdapter);
     }
+
 }

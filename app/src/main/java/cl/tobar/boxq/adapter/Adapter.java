@@ -1,7 +1,6 @@
 package cl.tobar.boxq.adapter;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,73 +15,65 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import cl.tobar.boxq.Create;
 import cl.tobar.boxq.CreateFragment;
 import cl.tobar.boxq.R;
 import cl.tobar.boxq.model.Box;
 
 public class Adapter extends FirestoreRecyclerAdapter<Box, Adapter.ViewHolder>{
 
-    private FirebaseFirestore mFirestore = FirebaseFirestore.getInstance();
+    private CollectionReference boxCollectionRef;
     private Activity activity;
     //Este es el fragment
-    FragmentManager fm;
-    /**
-     * Create a new RecyclerView adapter that listens to a Firestore Query.  See {@link
-     * FirestoreRecyclerOptions} for configuration options.
-     *
-     */
-    public Adapter(@NonNull FirestoreRecyclerOptions<Box> options, Activity activity, FragmentManager fm) {
+    private FragmentManager fm;
+
+    //Constructor
+    public Adapter(@NonNull FirestoreRecyclerOptions<Box> options, Activity activity, FragmentManager fm, String userId) {
         super(options);
         this.activity = activity;
         this.fm = fm;
+        //Obtiene la referencia a la colección asociada al usuario actual (Se ve con la id de este mismo)
+        boxCollectionRef = FirebaseFirestore.getInstance().collection(userId);
     }
-
-
 
     //Lee los datos en la base de datos
     @Override
-    protected void onBindViewHolder(@NonNull ViewHolder viewHolder, int i, @NonNull Box Box) {
-
+    protected void onBindViewHolder(@NonNull ViewHolder viewHolder, int i, @NonNull Box box) {
         DocumentSnapshot documentSnapshot = getSnapshots().getSnapshot(viewHolder.getBindingAdapterPosition());
         final String id = documentSnapshot.getId();
 
-        viewHolder.name.setText(Box.getName());
-        viewHolder.weight.setText(Box.getWeight());
-        viewHolder.repe.setText(Box.getRepe());
-        viewHolder.mod.setText(Box.getMod());
+        viewHolder.name.setText(box.getName());
+        viewHolder.weight.setText(box.getWeight());
+        viewHolder.repe.setText(box.getRepe());
+        viewHolder.mod.setText(box.getMod());
 
-        //Aqui se crea el metodo de editar con nueva layout (Desactivado para usar Fragment)
+        //Método para editar
         viewHolder.btn_edit.setOnClickListener(v -> {
-            Intent i1 = new Intent(activity, Create.class);
-            i1.putExtra("id_ejer", id);
-            //activity.startActivity(i);
-
+            //Crea un fragmento de edición y pasarle el ID del documento
             CreateFragment createFragment = new CreateFragment();
             Bundle bundle = new Bundle();
             bundle.putString("id_ejer", id);
             createFragment.setArguments(bundle);
+
             createFragment.show(fm, "open fragment");
         });
 
-
-
-
-        //Aqui se crea el metodo para eliminar
+        //Método para eliminar
         viewHolder.btn_delete.setOnClickListener(v -> deleteBox(id));
-
     }
+
 
     //Aqui muestra el mensaje correspondiente, se compara el activity por si es null
     private void deleteBox(String id) {
-        //Excepcion de errores
-        mFirestore.collection("Pet").document(id).delete().addOnSuccessListener(unused -> {
+        // Excepcion de errores
+        boxCollectionRef.document(id).delete().addOnSuccessListener(unused -> {
             if (activity != null) {
-            Toast.makeText(activity, "Eliminado Correctamente", Toast.LENGTH_SHORT).show();
-        }}).addOnFailureListener(e -> Toast.makeText(activity, "Error al eliminar", Toast.LENGTH_SHORT).show());
+                Toast.makeText(activity, "Eliminado Correctamente", Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(e -> Toast.makeText(activity, "Error al eliminar", Toast.LENGTH_SHORT).show());
     }
 
     //Muestra los datos obtenidos en view_single.xml
@@ -112,4 +103,3 @@ public class Adapter extends FirestoreRecyclerAdapter<Box, Adapter.ViewHolder>{
         }
     }
 }
-

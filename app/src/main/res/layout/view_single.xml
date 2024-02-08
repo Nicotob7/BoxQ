@@ -11,121 +11,133 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:padding="10dp">
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Movimiento: " />
-
-            <TextView
-                android:id="@+id/nombre"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Nombre"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="10dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Movimiento: " />
+
+                <TextView
+                    android:id="@+id/nombre"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Nombre"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:orientation="horizontal">
 
-                    <TextView
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:text="Reps:" />
+                        android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/repe"
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Reps:" />
+
+                        <TextView
+                            android:id="@+id/repe"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Repe"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:text="Repe"
-                        android:textSize="16sp" />
-                </LinearLayout>
+                        android:orientation="vertical">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Carga:" />
 
-                    <TextView
+                        <TextView
+                            android:id="@+id/weight"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Peso"
+                            android:textSize="16sp" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:text="Carga:" />
+                        android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/weight"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Peso"
-                        android:textSize="16sp" />
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Modalidad:" />
 
-                </LinearLayout>
+                        <TextView
+                            android:id="@+id/modalidad"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Modo"
+                            android:textSize="16sp" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Modalidad:" />
-
-                    <TextView
-                        android:id="@+id/modalidad"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Modo"
-                        android:textSize="16sp" />
+                    </LinearLayout>
 
                 </LinearLayout>
 
             </LinearLayout>
 
+            <ImageView
+                android:id="@+id/btn_editar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#4763F1"
+                android:padding="5dp"
+                app:srcCompat="@drawable/ic_edit" />
+
+            <Space
+                android:layout_width="10dp"
+                android:layout_height="wrap_content" />
+
+            <ImageView
+                android:id="@+id/btn_eliminar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#FF0000"
+                android:padding="5dp"
+                app:srcCompat="@drawable/ic_delete" />
+
         </LinearLayout>
 
-        <ImageView
-            android:id="@+id/btn_editar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="#4763F1"
-            android:padding="5dp"
-            app:srcCompat="@drawable/ic_edit" />
-
-        <Space
-            android:layout_width="10dp"
+        <Spinner
+            android:id="@+id/spinner2"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content" />
-
-        <ImageView
-            android:id="@+id/btn_eliminar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="#FF0000"
-            android:padding="5dp"
-            app:srcCompat="@drawable/ic_delete" />
 
     </LinearLayout>
 

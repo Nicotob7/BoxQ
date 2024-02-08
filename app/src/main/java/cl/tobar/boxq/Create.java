@@ -51,7 +51,7 @@ public class Create extends AppCompatActivity {
                 String weight_box = weight.getText().toString().trim();
                 String mod_box = mod.getText().toString().trim();
 
-                // Si algún campo está vacío, se pide que ingrese los datos; de lo contrario, se realiza un post
+                //Si algún campo está vacío, se pide que ingrese los datos de lo contrario, se realiza un post
                 if (name_box.isEmpty() && repe_box.isEmpty() && weight_box.isEmpty() && mod_box.isEmpty()) {
                     Toast.makeText(getApplicationContext(), "Ingresar los datos", Toast.LENGTH_SHORT).show();
                 } else {
@@ -70,7 +70,7 @@ public class Create extends AppCompatActivity {
                     String weight_box = weight.getText().toString().trim();
                     String mod_box = mod.getText().toString().trim();
 
-                    // Si algún campo está vacío, se pide que ingrese los datos; de lo contrario, se realiza un post
+                    //Si algún campo está vacío, se pide que ingrese los datos; de lo contrario, se realiza un post
                     if (name_box.isEmpty() && color_pet.isEmpty() && weight_box.isEmpty() && mod_box.isEmpty()) {
                         Toast.makeText(getApplicationContext(), "Ingresar los datos", Toast.LENGTH_SHORT).show();
                     } else {
@@ -79,18 +79,21 @@ public class Create extends AppCompatActivity {
                 }
 
                 private void updateBox(String name_pet, String color_pet, String weight_box, String mod_pet, String id) {
-                    Map <String, Object> map = new HashMap<>();
+                    Map<String, Object> map = new HashMap<>();
                     map.put("name", name_pet);
-                    map.put("color", color_pet);
+                    map.put("repe", color_pet); // Aquí he cambiado "color" por "repe" para que coincida con la estructura de la base de datos
                     map.put("weight", weight_box);
                     map.put("mod", mod_pet);
 
-                    //En caso de que tenga algun error
-                    mfirestore.collection("Pet").document(id).update(map).addOnSuccessListener(unused -> {
-                        Toast.makeText(getApplicationContext(), "Actualizado exitosamente", Toast.LENGTH_SHORT).show();
-                        finish();
-                    }).addOnFailureListener(e -> Toast.makeText(getApplicationContext(), "Error al Actualizar", Toast.LENGTH_SHORT).show());
+                    // Actualiza los datos en la base de datos
+                    mfirestore.collection("Pet").document(id).update(map)
+                            .addOnSuccessListener(unused -> {
+                                Toast.makeText(getApplicationContext(), "Actualizado exitosamente", Toast.LENGTH_SHORT).show();
+                                finish();
+                            })
+                            .addOnFailureListener(e -> Toast.makeText(getApplicationContext(), "Error al Actualizar", Toast.LENGTH_SHORT).show());
                 }
+
             });
             }
 
@@ -121,7 +124,7 @@ public class Create extends AppCompatActivity {
         mfirestore.collection("Pet").document(id).get().addOnSuccessListener(documentSnapshot -> {
             String namePet = documentSnapshot.getString("name");
             String weightbox = documentSnapshot.getString("weight");
-            String colorPet = documentSnapshot.getString("color");
+            String colorPet = documentSnapshot.getString("repe");
             String modPet = documentSnapshot.getString("mod");
 
             name.setText(namePet);
