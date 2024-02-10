@@ -18,6 +18,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
 import java.util.Calendar;
+import java.util.Objects;
 
 import cl.tobar.boxq.adapter.Adapter;
 import cl.tobar.boxq.model.Box;
@@ -92,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
         dateTextView.setText("Semana del " + mondayDayOfMonth + " - al " + sundayDayOfMonth + " de " + monthName);
     }
 
-    //Método para obtener el nombre del mes a partir del número de mes (De seguro hay algo mas facil)
+    //Método para obtener el nombre del mes (De seguro hay algo mas facil)
     private String getMonthName(int month) {
         String[] monthNames = new String[]{"enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"};
         return monthNames[month];
@@ -124,11 +125,12 @@ public class MainActivity extends AppCompatActivity {
         mRecycler.setLayoutManager(new LinearLayoutManager(this));
         mRecycler.setItemAnimator(null);
 
-        // ID del usuario actualmente autenticado en la APP
-        String userId = mAuth.getCurrentUser().getUid();
+
+        //ID del usuario actualmente autenticado en la APP
+        String userId = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
 
         // Filtra la colección del usuario actual (por su id) y excluye el documento "profile"
-        query = mFirestore.collection(userId).whereNotEqualTo(FieldPath.documentId(), "profile");
+        query = mFirestore.collection(userId).document("Power Snatch").collection("Ejercicios").whereNotEqualTo(FieldPath.documentId(), "profile");
 
         FirestoreRecyclerOptions<Box> firestoreRecyclerOptions =
                 new FirestoreRecyclerOptions.Builder<Box>()

@@ -15,16 +15,22 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
 public class CreateFragment extends DialogFragment {
 
-    String id_ejer;
+    String id_ejer, name_box, formattedDate;
     Button btn_agregar;
     EditText repe, weight;
 
@@ -37,10 +43,13 @@ public class CreateFragment extends DialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+
         Bundle args = getArguments();
         if (args != null) {
             id_ejer = args.getString("id_ejer");
         }
+
+
 
         View v =  inflater.inflate(R.layout.fragment_create, container, false);
         mfirestore = FirebaseFirestore.getInstance();
@@ -116,7 +125,7 @@ public class CreateFragment extends DialogFragment {
         map.put("userId", userId);
 
         // Actualizar el documento con el ID proporcionado
-        mfirestore.collection(userId).document(id_ejer).update(map)
+        mfirestore.collection(userId).document(name_box).collection("Ejercicios").document(formattedDate).update(map)
                 .addOnSuccessListener(unused -> {
                     Toast.makeText(getContext(), "Actualizado exitosamente", Toast.LENGTH_SHORT).show();
                     Objects.requireNonNull(getDialog()).dismiss();
@@ -125,23 +134,39 @@ public class CreateFragment extends DialogFragment {
 
 
     private void postBox(String name_box, String repe_box, String weight_box, String mod_box, String userId) {
-        // Se crea map para pasarle todos los datos y así crearlos en la DB
-        Map<String, Object> map = new HashMap<>();
+        createBoxCollection(name_box, repe_box, weight_box, mod_box, userId);
+    }
 
+    private void createBoxCollection(String name_box, String repe_box, String weight_box, String mod_box, String userId) {
+        // Obtener la fecha actual
+        Date currentDate = Calendar.getInstance().getTime();
+
+        // Formatear la fecha si es necesario
+        // Aquí puedes usar SimpleDateFormat para convertir la fecha a una cadena en el formato deseado
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        String formattedDate = dateFormat.format(currentDate);
+
+        // Crear el mapa para almacenar los datos
+        Map<String, Object> map = new HashMap<>();
         map.put("userId", userId);
         map.put("name", name_box);
         map.put("repe", repe_box);
         map.put("weight", weight_box);
         map.put("mod", mod_box);
+        map.put("date", formattedDate); // Agregar la fecha al mapa
 
-        mfirestore.collection(userId).document().set(map).addOnSuccessListener(documentReference -> {
-            Toast.makeText(getContext(), "Creado exitosamente", Toast.LENGTH_SHORT).show();
-            Objects.requireNonNull(getDialog()).dismiss();
-        }).addOnFailureListener(e -> Toast.makeText(getContext(), "Error al ingresar", Toast.LENGTH_SHORT).show());
+        //Guarda los datos en Firestore
+        mfirestore.collection(userId).document(name_box).collection("Ejercicios").document(formattedDate).set(map)
+                .addOnSuccessListener(documentReference -> {
+                    Toast.makeText(getContext(), "Creado exitosamente", Toast.LENGTH_SHORT).show();
+                    Objects.requireNonNull(getDialog()).dismiss();
+                })
+                .addOnFailureListener(e -> Toast.makeText(getContext(), "Error al ingresar", Toast.LENGTH_SHORT).show());
     }
 
+
     private void getBox(String userId) { // Agregar userId como parámetro
-        mfirestore.collection(userId).document(id_ejer).get().addOnSuccessListener(documentSnapshot -> {
+        mfirestore.collection(userId).document(name_box).collection("Ejercicios").document(formattedDate).get().addOnSuccessListener(documentSnapshot -> {
             String nameBox = documentSnapshot.getString("name");
             String weightbox = documentSnapshot.getString("weight");
             String repeBox = documentSnapshot.getString("repe");

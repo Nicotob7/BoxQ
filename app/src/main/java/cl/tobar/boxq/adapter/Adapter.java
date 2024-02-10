@@ -1,10 +1,14 @@
 package cl.tobar.boxq.adapter;
 
+import static androidx.core.content.ContextCompat.startActivity;
+
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,6 +24,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import cl.tobar.boxq.CreateFragment;
+import cl.tobar.boxq.More;
 import cl.tobar.boxq.R;
 import cl.tobar.boxq.model.Box;
 
@@ -36,7 +41,7 @@ public class Adapter extends FirestoreRecyclerAdapter<Box, Adapter.ViewHolder>{
         this.activity = activity;
         this.fm = fm;
         //Obtiene la referencia a la colección asociada al usuario actual (Se ve con la id de este mismo)
-        boxCollectionRef = FirebaseFirestore.getInstance().collection(userId);
+        boxCollectionRef = FirebaseFirestore.getInstance().collection(userId).document("Power Snatch").collection("Ejercicios");
     }
 
     //Lee los datos en la base de datos
@@ -50,16 +55,23 @@ public class Adapter extends FirestoreRecyclerAdapter<Box, Adapter.ViewHolder>{
         viewHolder.repe.setText(box.getRepe());
         viewHolder.mod.setText(box.getMod());
 
+        viewHolder.btn_more.setOnClickListener(view -> {
+            Intent intent = new Intent(activity, More.class);
+
+            activity.startActivity(intent);
+        });
+
         //Método para editar
         viewHolder.btn_edit.setOnClickListener(v -> {
             //Crea un fragmento de edición y pasarle el ID del documento
             CreateFragment createFragment = new CreateFragment();
             Bundle bundle = new Bundle();
-            bundle.putString("id_ejer", id);
+            bundle.putString("Power Snatch", id);
             createFragment.setArguments(bundle);
 
             createFragment.show(fm, "open fragment");
         });
+
 
         //Método para eliminar
         viewHolder.btn_delete.setOnClickListener(v -> deleteBox(id));
@@ -87,6 +99,8 @@ public class Adapter extends FirestoreRecyclerAdapter<Box, Adapter.ViewHolder>{
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView name, repe, weight, mod;
 
+        Button btn_more;
+
         ImageView btn_delete, btn_edit;
 
         //View pet single id
@@ -98,6 +112,7 @@ public class Adapter extends FirestoreRecyclerAdapter<Box, Adapter.ViewHolder>{
             weight = itemView.findViewById(R.id.weight);
             mod = itemView.findViewById(R.id.modalidad);
 
+            btn_more = itemView.findViewById(R.id.btn_mas);
             btn_delete = itemView.findViewById(R.id.btn_eliminar);
             btn_edit = itemView.findViewById(R.id.btn_editar);
         }
