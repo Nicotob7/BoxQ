@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
 
         //Calcula el número del día lunes y el día domingo (Para decir semana desde tanto tanto)
         int mondayDayOfMonth = dayOfMonth - (dayOfWeek - Calendar.MONDAY);
-        int sundayDayOfMonth = dayOfMonth + (Calendar.SUNDAY - dayOfWeek + (dayOfWeek == Calendar.SUNDAY ? 0 : 7));
+        int sundayDayOfMonth = dayOfMonth + (Calendar.SUNDAY - dayOfWeek + (dayOfWeek == Calendar.MONDAY ? 0 : 7));
 
         //Nombre del mes
         String monthName = getMonthName(calendar.get(Calendar.MONTH));

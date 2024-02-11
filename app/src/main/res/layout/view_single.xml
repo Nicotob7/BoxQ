@@ -16,10 +16,7 @@
             android:id="@+id/btn_mas"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:backgroundTint="#651FFF"
-            android:clickable="true"
-            android:foregroundGravity="top"
-            android:gravity="top"
+            android:backgroundTint="#6200EA"
             android:text="Ver mas" />
 
         <LinearLayout
