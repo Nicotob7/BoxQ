@@ -120,12 +120,12 @@ public class CreateFragment extends DialogFragment {
         Map<String, Object> map = new HashMap<>();
         map.put("name", name_box);
         map.put("repe", repe_box);
-        map.put("weight", weight_box);
+        map.put("weight", weight_box + " LB");
         map.put("mod", mod_box);
         map.put("userId", userId);
 
         // Actualizar el documento con el ID proporcionado
-        mfirestore.collection(userId).document(name_box).collection("Ejercicios").document(formattedDate).update(map)
+        mfirestore.collection(userId).document("Ejercicios").collection("Ejercicios").document(id_ejer).update(map)
                 .addOnSuccessListener(unused -> {
                     Toast.makeText(getContext(), "Actualizado exitosamente", Toast.LENGTH_SHORT).show();
                     Objects.requireNonNull(getDialog()).dismiss();
@@ -143,7 +143,7 @@ public class CreateFragment extends DialogFragment {
 
         // Formatear la fecha si es necesario
         // Aquí puedes usar SimpleDateFormat para convertir la fecha a una cadena en el formato deseado
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yy-MM-dd HH:mm:ss", Locale.getDefault());
         String formattedDate = dateFormat.format(currentDate);
 
         // Crear el mapa para almacenar los datos
@@ -151,12 +151,12 @@ public class CreateFragment extends DialogFragment {
         map.put("userId", userId);
         map.put("name", name_box);
         map.put("repe", repe_box);
-        map.put("weight", weight_box);
+        map.put("weight", weight_box + " LB");
         map.put("mod", mod_box);
         map.put("date", formattedDate); // Agregar la fecha al mapa
 
         //Guarda los datos en Firestore
-        mfirestore.collection(userId).document(name_box).collection("Ejercicios").document(formattedDate).set(map)
+        mfirestore.collection(userId).document("Ejercicios").collection("Ejercicios").document().set(map)
                 .addOnSuccessListener(documentReference -> {
                     Toast.makeText(getContext(), "Creado exitosamente", Toast.LENGTH_SHORT).show();
                     Objects.requireNonNull(getDialog()).dismiss();
@@ -166,11 +166,16 @@ public class CreateFragment extends DialogFragment {
 
 
     private void getBox(String userId) { // Agregar userId como parámetro
-        mfirestore.collection(userId).document(name_box).collection("Ejercicios").document(formattedDate).get().addOnSuccessListener(documentSnapshot -> {
+        mfirestore.collection(userId).document("Ejercicios").collection("Ejercicios").document(id_ejer).get().addOnSuccessListener(documentSnapshot -> {
             String nameBox = documentSnapshot.getString("name");
             String weightbox = documentSnapshot.getString("weight");
             String repeBox = documentSnapshot.getString("repe");
             String modBox = documentSnapshot.getString("mod");
+
+            //Elimina "LB" del peso
+            if (weightbox != null) {
+                weightbox = weightbox.replaceAll(" LB", "");
+            }
 
             setSpinnerSelection(spinnerNombre, nameBox);
             weight.setText(weightbox);

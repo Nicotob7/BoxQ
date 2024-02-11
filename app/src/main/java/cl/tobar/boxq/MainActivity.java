@@ -1,9 +1,5 @@
 package cl.tobar.boxq;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,10 +7,19 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 
 import java.util.Calendar;
@@ -32,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
     FirebaseAuth mAuth;
     Query query;
 
-    private TextView dateTextView;
+    TextView date, name_user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +46,8 @@ public class MainActivity extends AppCompatActivity {
 
         this.setTitle("Agregar ejercicio");
 
-        dateTextView = findViewById(R.id.dia);
+        date = findViewById(R.id.dia);
+        name_user = findViewById(R.id.name_user);
         updateDateTextView();
 
         mFirestore = FirebaseFirestore.getInstance();
@@ -69,6 +75,9 @@ public class MainActivity extends AppCompatActivity {
             finish();
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
         });
+
+        // Escuchar cambios en el nombre del usuario
+        listenToUserName();
     }
 
     private void updateDateTextView() {
@@ -90,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
         String monthName = getMonthName(calendar.get(Calendar.MONTH));
 
         //Texto en el TextView (dia)
-        dateTextView.setText("Semana del " + mondayDayOfMonth + " - al " + sundayDayOfMonth + " de " + monthName);
+        date.setText("Semana del " + mondayDayOfMonth + " - al " + sundayDayOfMonth + " de " + monthName);
     }
 
     //Método para obtener el nombre del mes (De seguro hay algo mas facil)
@@ -125,12 +134,11 @@ public class MainActivity extends AppCompatActivity {
         mRecycler.setLayoutManager(new LinearLayoutManager(this));
         mRecycler.setItemAnimator(null);
 
-
         //ID del usuario actualmente autenticado en la APP
         String userId = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
 
         // Filtra la colección del usuario actual (por su id) y excluye el documento "profile"
-        query = mFirestore.collection(userId).document("Power Snatch").collection("Ejercicios").whereNotEqualTo(FieldPath.documentId(), "profile");
+        query = mFirestore.collection(userId).document("Ejercicios").collection("Ejercicios").whereNotEqualTo(FieldPath.documentId(), "profile");
 
         FirestoreRecyclerOptions<Box> firestoreRecyclerOptions =
                 new FirestoreRecyclerOptions.Builder<Box>()
@@ -141,4 +149,26 @@ public class MainActivity extends AppCompatActivity {
         mRecycler.setAdapter(mAdapter);
     }
 
+    // Escuchar cambios en el nombre del usuario
+    private void listenToUserName() {
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            String userId = currentUser.getUid();
+            mFirestore.collection("user").document(userId)
+                    .addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                        @Override
+                        public void onEvent(@javax.annotation.Nullable DocumentSnapshot documentSnapshot, @javax.annotation.Nullable FirebaseFirestoreException e) {
+                            if (e != null) {
+                                Log.e("MainActivity", "Listen failed.", e);
+                                return;
+                            }
+
+                            if (documentSnapshot != null && documentSnapshot.exists()) {
+                                String name = documentSnapshot.getString("name");
+                                name_user.setText(name); // Actualizar el nombre en el TextView
+                            }
+                        }
+                    });
+        }
+    }
 }

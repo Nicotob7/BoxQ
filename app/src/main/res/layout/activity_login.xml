@@ -104,18 +104,18 @@
                 android:visibility="visible">
 
                 <ImageView
+                    android:id="@+id/imageView3"
                     android:layout_width="1dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:src="@drawable/chrome_svgrepo_com"
-                    android:contentDescription="@string/todo" />
+                    app:srcCompat="@drawable/common_google_signin_btn_icon_light_normal" />
 
                 <Button
                     android:id="@+id/btn_google"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:backgroundTint="#D1D1D1"
+                    android:backgroundTint="#FEFEFE"
                     android:text="@string/iniciar_sesi_n_con_google"
                     android:textColor="#000000"
                     android:textSize="12sp"
@@ -125,4 +125,5 @@
 
         </LinearLayout>
     </androidx.cardview.widget.CardView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

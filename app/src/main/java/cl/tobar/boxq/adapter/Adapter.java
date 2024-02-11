@@ -41,7 +41,7 @@ public class Adapter extends FirestoreRecyclerAdapter<Box, Adapter.ViewHolder>{
         this.activity = activity;
         this.fm = fm;
         //Obtiene la referencia a la colección asociada al usuario actual (Se ve con la id de este mismo)
-        boxCollectionRef = FirebaseFirestore.getInstance().collection(userId).document("Power Snatch").collection("Ejercicios");
+        boxCollectionRef = FirebaseFirestore.getInstance().collection(userId).document("Ejercicios").collection("Ejercicios");
     }
 
     //Lee los datos en la base de datos
@@ -66,7 +66,7 @@ public class Adapter extends FirestoreRecyclerAdapter<Box, Adapter.ViewHolder>{
             //Crea un fragmento de edición y pasarle el ID del documento
             CreateFragment createFragment = new CreateFragment();
             Bundle bundle = new Bundle();
-            bundle.putString("Power Snatch", id);
+            bundle.putString("id_ejer", id);
             createFragment.setArguments(bundle);
 
             createFragment.show(fm, "open fragment");

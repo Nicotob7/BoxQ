@@ -38,19 +38,20 @@
     <string name="button_perfil">button perfil</string>
 
     <string-array name="op_nombre">
-        <item>Power Snatch</item>
-        <item>Snatch</item>
-        <item>Muscle Snatch</item>
-        <item>Deadlifts Snatch</item>
-        <item>Front Squat</item>
-        <item>Back Squat</item>
-        <item>Power Clean</item>
-        <item>Clean</item>
-        <item>Deadlifts Clean</item>
-        <item>Clean and Split/Squat Jerk</item>
-        <item>Jerk desde Soporte</item>
-        <item>Shoulder Press</item>
-        <item>Push Press</item>
+        <item>Power Snatch </item>
+        <item>Snatch </item>
+        <item>Muscle Snatch </item>
+        <item>Deadlifts Snatch </item>
+        <item>Front Squat </item>
+        <item>Back Squat </item>
+        <item>Power Clean </item>
+        <item>Clean </item>
+        <item>Deadlifts Clean </item>
+        <item>Clean and Split </item>
+        <item>Squat Jerk </item>
+        <item>Jerk desde Soporte </item>
+        <item>Shoulder Press </item>
+        <item>Push Press </item>
     </string-array>
 
 
