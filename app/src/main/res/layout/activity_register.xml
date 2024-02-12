@@ -50,6 +50,12 @@
                 android:inputType="text"
                 android:padding="24dp" />
 
+            <TextView
+                android:id="@+id/textView12"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Correo" />
+
             <EditText
                 android:id="@+id/correo"
                 android:layout_width="match_parent"
@@ -64,7 +70,7 @@
                 android:id="@+id/textView12"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Minimo 6 caracteres" />
+                android:text="Contraseña" />
 
             <EditText
                 android:id="@+id/contraseña"
@@ -84,6 +90,7 @@
                 android:id="@+id/btn_registro"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:backgroundTint="#7C4DFF"
                 android:text="@string/registrarmee"
                 app:cornerRadius="10dp" />
 

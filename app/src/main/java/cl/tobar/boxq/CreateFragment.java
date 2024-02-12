@@ -96,73 +96,147 @@ public class CreateFragment extends DialogFragment {
                 }
             });
         } else {
-            getBox(userId); // Pasa userId como argumento
+            getBox(userId);
+            //Bloquea el spinner (name_box)
+            spinnerNombre.setEnabled(false);
             btn_agregar.setText("Actualizar");
             // Aquí le decimos que los datos que nos dio el usuario se pasan a string y sin espacios
             btn_agregar.setOnClickListener(view -> {
-                String name_pet = spinnerNombre.getSelectedItem().toString();
+                String name_box = spinnerNombre.getSelectedItem().toString();
                 String repe_box = repe.getText().toString().trim();
                 String weight_box = weight.getText().toString().trim();
                 String mod_box = spinnerModalidad.getSelectedItem().toString();
 
                 // Si algún campo está vacío se pide que ingrese los datos, si no, se hace un post
-                if (name_pet.isEmpty() && repe_box.isEmpty() && weight_box.isEmpty() && mod_box.isEmpty()) {
+                if (name_box.isEmpty() && repe_box.isEmpty() && weight_box.isEmpty() && mod_box.isEmpty()) {
                     Toast.makeText(getContext(), "Ingresar los datos", Toast.LENGTH_SHORT).show();
                 } else {
-                    updateBox(name_pet, repe_box, weight_box, mod_box, userId);
+                    updateBox(name_box, repe_box, weight_box, mod_box, userId);
                 }
             });
         }
         return v;
     }
 
+    //No incluir el campo "name" en la actualización
     private void updateBox(String name_box, String repe_box, String weight_box, String mod_box, String userId) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("name", name_box);
-        map.put("repe", repe_box);
-        map.put("weight", weight_box + " LB");
-        map.put("mod", mod_box);
-        map.put("userId", userId);
 
-        // Actualizar el documento con el ID proporcionado
-        mfirestore.collection(userId).document("Ejercicios").collection("Ejercicios").document(id_ejer).update(map)
-                .addOnSuccessListener(unused -> {
-                    Toast.makeText(getContext(), "Actualizado exitosamente", Toast.LENGTH_SHORT).show();
-                    Objects.requireNonNull(getDialog()).dismiss();
-                }).addOnFailureListener(e -> Toast.makeText(getContext(), "Error al Actualizar", Toast.LENGTH_SHORT).show());
+        spinnerNombre.setEnabled(false);
+
+        //Validar que los valores no estén vacíos
+        if (repe_box.isEmpty() || weight_box.isEmpty()) {
+            Toast.makeText(getContext(), "Por favor ingresa valores para Repeticiones y Carga", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        //Validar que los valores sean números (Igual estan definido en el xml que debe ser int)
+        try {
+            int reps = Integer.parseInt(repe_box);
+            double weight = Double.parseDouble(weight_box);
+
+            // Validar que los valores estén dentro del rango permitido
+            if (reps <= 1000 && weight <= 1000) {
+                Map<String, Object> map = new HashMap<>();
+
+                map.put("repe", repe_box);
+                map.put("weight", weight_box + " LB");
+                map.put("mod", mod_box);
+                map.put("userId", userId);
+
+                // Actualizar el documento con el ID proporcionado
+                mfirestore.collection(userId)
+                        .document("Ejercicios")
+                        .collection("Ejercicios")
+                        .document(id_ejer)
+                        .update(map)
+                        .addOnSuccessListener(unused -> {
+                            Toast.makeText(getContext(), "Actualizado exitosamente", Toast.LENGTH_SHORT).show();
+                            Objects.requireNonNull(getDialog()).dismiss();
+                        })
+                        .addOnFailureListener(e -> Toast.makeText(getContext(), "Error al Actualizar", Toast.LENGTH_SHORT).show());
+            } else {
+                Toast.makeText(getContext(), "El número máximo permitido para Repeticiones y Carga es 1000", Toast.LENGTH_SHORT).show();
+            }
+        } catch (NumberFormatException e) {
+            Toast.makeText(getContext(), "Por favor ingresa valores numéricos válidos para Repeticiones y Carga", Toast.LENGTH_SHORT).show();
+        }
     }
+
 
 
     private void postBox(String name_box, String repe_box, String weight_box, String mod_box, String userId) {
-        createBoxCollection(name_box, repe_box, weight_box, mod_box, userId);
+        // Validar que los valores no estén vacíos
+        if (repe_box.isEmpty() || weight_box.isEmpty()) {
+            Toast.makeText(getContext(), "Por favor ingresa valores para Repeticiones y Carga", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Validar que los valores sean números
+        try {
+            int reps = Integer.parseInt(repe_box);
+            double weight = Double.parseDouble(weight_box);
+
+            // Validar que los valores estén dentro del rango permitido
+            if (reps <= 1000 && weight <= 1000) {
+                createBoxCollection(name_box, repe_box, weight_box, mod_box, userId);
+            } else {
+                Toast.makeText(getContext(), "El número máximo permitido para Repeticiones y Carga es 1000", Toast.LENGTH_SHORT).show();
+            }
+        } catch (NumberFormatException e) {
+            Toast.makeText(getContext(), "Por favor ingresa valores numéricos válidos para Repeticiones y Carga", Toast.LENGTH_SHORT).show();
+        }
     }
+
 
     private void createBoxCollection(String name_box, String repe_box, String weight_box, String mod_box, String userId) {
         // Obtener la fecha actual
         Date currentDate = Calendar.getInstance().getTime();
 
         // Formatear la fecha si es necesario
-        // Aquí puedes usar SimpleDateFormat para convertir la fecha a una cadena en el formato deseado
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yy-MM-dd HH:mm:ss", Locale.getDefault());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         String formattedDate = dateFormat.format(currentDate);
 
-        // Crear el mapa para almacenar los datos
-        Map<String, Object> map = new HashMap<>();
-        map.put("userId", userId);
-        map.put("name", name_box);
-        map.put("repe", repe_box);
-        map.put("weight", weight_box + " LB");
-        map.put("mod", mod_box);
-        map.put("date", formattedDate); // Agregar la fecha al mapa
+        // Consultar Firestore para verificar si ya existe un documento con el mismo nombre y la misma fecha
+        mfirestore.collection(userId)
+                .document("Ejercicios")
+                .collection("Ejercicios")
+                .whereEqualTo("userId", userId)
+                .whereEqualTo("name", name_box)
+                .whereEqualTo("date", formattedDate)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        if (!task.getResult().isEmpty()) {
+                            // Ya existe un documento con el mismo nombre y fecha, mostrar advertencia
+                            Toast.makeText(getContext(), "Ya se ha registrado '" + name_box + "' para hoy", Toast.LENGTH_SHORT).show();
+                        } else {
+                            // No existe un documento con el mismo nombre y fecha, crear uno nuevo
+                            Map<String, Object> map = new HashMap<>();
+                            map.put("userId", userId);
+                            map.put("name", name_box);
+                            map.put("repe", repe_box);
+                            map.put("weight", weight_box + " LB");
+                            map.put("mod", mod_box);
+                            map.put("date", formattedDate); // Agregar la fecha al mapa
 
-        //Guarda los datos en Firestore
-        mfirestore.collection(userId).document("Ejercicios").collection("Ejercicios").document().set(map)
-                .addOnSuccessListener(documentReference -> {
-                    Toast.makeText(getContext(), "Creado exitosamente", Toast.LENGTH_SHORT).show();
-                    Objects.requireNonNull(getDialog()).dismiss();
-                })
-                .addOnFailureListener(e -> Toast.makeText(getContext(), "Error al ingresar", Toast.LENGTH_SHORT).show());
+                            // Guarda los datos en Firestore
+                            mfirestore.collection(userId)
+                                    .document("Ejercicios")
+                                    .collection("Ejercicios")
+                                    .document()
+                                    .set(map)
+                                    .addOnSuccessListener(documentReference -> {
+                                        Toast.makeText(getContext(), "Creado exitosamente", Toast.LENGTH_SHORT).show();
+                                        Objects.requireNonNull(getDialog()).dismiss();
+                                    })
+                                    .addOnFailureListener(e -> Toast.makeText(getContext(), "Error al ingresar", Toast.LENGTH_SHORT).show());
+                        }
+                    } else {
+                        Toast.makeText(getContext(), "Error al consultar Firestore", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
+
 
 
     private void getBox(String userId) { // Agregar userId como parámetro

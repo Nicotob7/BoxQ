@@ -22,7 +22,10 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Objects;
 
 import cl.tobar.boxq.adapter.Adapter;
@@ -44,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        this.setTitle("Agregar ejercicio");
+
 
         date = findViewById(R.id.dia);
         name_user = findViewById(R.id.name_user);
@@ -95,6 +98,8 @@ public class MainActivity extends AppCompatActivity {
         int mondayDayOfMonth = dayOfMonth - (dayOfWeek - Calendar.MONDAY);
         int sundayDayOfMonth = dayOfMonth + (Calendar.SUNDAY - dayOfWeek + (dayOfWeek == Calendar.MONDAY ? 0 : 7));
 
+
+
         //Nombre del mes
         String monthName = getMonthName(calendar.get(Calendar.MONTH));
 
@@ -128,17 +133,28 @@ public class MainActivity extends AppCompatActivity {
         Log.d("MainActivity", "onStop");
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     private void setUpRecyclerView() {
         mRecycler = findViewById(R.id.recyclerViewSingle);
         mRecycler.setLayoutManager(new LinearLayoutManager(this));
         mRecycler.setItemAnimator(null);
 
-        //ID del usuario actualmente autenticado en la APP
+        // Obtener la fecha actual
+        Date currentDate = Calendar.getInstance().getTime();
+
+        // Formatear la fecha si es necesario
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        String formattedDate = dateFormat.format(currentDate);
+
+        // ID del usuario actualmente autenticado en la APP
         String userId = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
 
-        // Filtra la colección del usuario actual (por su id) y excluye el documento "profile"
-        query = mFirestore.collection(userId).document("Ejercicios").collection("Ejercicios").whereNotEqualTo(FieldPath.documentId(), "profile");
+        // Filtra la colección del usuario actual (por su id), excluye el documento "profile"
+        // y solo trae los documentos con la fecha actual
+        query = mFirestore.collection(userId)
+                .document("Ejercicios")
+                .collection("Ejercicios")
+                .whereNotEqualTo(FieldPath.documentId(), "profile")
+                .whereEqualTo("date", formattedDate);
 
         FirestoreRecyclerOptions<Box> firestoreRecyclerOptions =
                 new FirestoreRecyclerOptions.Builder<Box>()
@@ -148,6 +164,7 @@ public class MainActivity extends AppCompatActivity {
         mAdapter = new Adapter(firestoreRecyclerOptions, this, getSupportFragmentManager(), userId);
         mRecycler.setAdapter(mAdapter);
     }
+
 
     // Escuchar cambios en el nombre del usuario
     private void listenToUserName() {

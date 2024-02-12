@@ -11,24 +11,23 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class RegisterActivity extends AppCompatActivity {
 
     Button btn_register;
     EditText name, email, password;
 
-    FirebaseDatabase database;
+    DatabaseReference databaseReference;
     FirebaseFirestore mFirestore;
     FirebaseAuth mAuth;
 
@@ -39,8 +38,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         mFirestore = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
-        database = FirebaseDatabase.getInstance();
-
+        databaseReference = FirebaseDatabase.getInstance().getReference("users");
 
         name = findViewById(R.id.name_correo);
         email = findViewById(R.id.correo);
@@ -56,10 +54,11 @@ public class RegisterActivity extends AppCompatActivity {
                 String emailUser = email.getText().toString().trim();
                 String passUser = password.getText().toString().trim();
 
-                if (nameUser.isEmpty() && emailUser.isEmpty() && passUser.isEmpty()){
+                if (nameUser.isEmpty() || emailUser.isEmpty() || passUser.isEmpty()){
                     Toast.makeText(RegisterActivity.this, "Completa los datos", Toast.LENGTH_SHORT).show();
-
-                }else{
+                } else if (passUser.length() < 6) {
+                    Toast.makeText(RegisterActivity.this, "La contraseña debe tener al menos 6 caracteres", Toast.LENGTH_SHORT).show();
+                } else {
                     registerUser(nameUser, emailUser, passUser);
                 }
             }
@@ -70,47 +69,59 @@ public class RegisterActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
-                                    // Obtener el ID único del usuario registrado
-                                    String userId = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
+                                    FirebaseUser user = mAuth.getCurrentUser();
+                                    if (user != null) {
+                                        user.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> emailTask) {
+                                                if (emailTask.isSuccessful()) {
+                                                    // Datos del usuario
+                                                    String userId = user.getUid();
+                                                    Map<String, Object> map = new HashMap<>();
+                                                    map.put("id", userId);
+                                                    map.put("name", nameUser);
+                                                    map.put("email", emailUser);
+                                                    map.put("password", passUser);
 
-                                    // Crear un mapa con los datos del usuario
-                                    Map<String, Object> map = new HashMap<>();
-                                    map.put("id", userId);
-                                    map.put("name", nameUser);
-                                    map.put("email", emailUser);
-                                    map.put("password", passUser);
-
-                                    database.getReference().child("users").child(userId).setValue(map);
-                                    mFirestore.collection("user").document(userId).set(map);
-
-                                    // Guardar los datos del usuario en Firestore bajo una colección con el ID del usuario
-                                    mFirestore.collection(userId).document("profile").set(map)
-
-
-                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                @Override
-                                                public void onSuccess(Void aVoid) {
-                                                    // Éxito al guardar en Firestore
-                                                    finish();
-                                                    startActivity(new Intent(RegisterActivity.this, MainActivity.class));
-                                                    Toast.makeText(RegisterActivity.this, "Usuario Registrado con éxito", Toast.LENGTH_SHORT).show();
+                                                    // Guardar datos del usuario en Firebase Realtime Database
+                                                    databaseReference.child(userId).setValue(map);
+                                                    mFirestore.collection(userId).document("profile").set(map)
+                                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                @Override
+                                                                public void onComplete(@NonNull Task<Void> dbTask) {
+                                                                    if (dbTask.isSuccessful()) {
+                                                                        // Guardar datos del usuario en Cloud Firestore
+                                                                        mFirestore.collection("user").document(userId).set(map)
+                                                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                    @Override
+                                                                                    public void onComplete(@NonNull Task<Void> firestoreTask) {
+                                                                                        if (firestoreTask.isSuccessful()) {
+                                                                                            Toast.makeText(RegisterActivity.this, "Se ha enviado un correo de verificación a " + user.getEmail(), Toast.LENGTH_SHORT).show();
+                                                                                            startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+                                                                                            finish();
+                                                                                        } else {
+                                                                                            Toast.makeText(RegisterActivity.this, "Error al guardar datos en Firestore", Toast.LENGTH_SHORT).show();
+                                                                                        }
+                                                                                    }
+                                                                                });
+                                                                    } else {
+                                                                        Toast.makeText(RegisterActivity.this, "Error al guardar datos en Realtime Database", Toast.LENGTH_SHORT).show();
+                                                                    }
+                                                                }
+                                                            });
+                                                } else {
+                                                    Toast.makeText(RegisterActivity.this, "Error al enviar correo de verificación", Toast.LENGTH_SHORT).show();
                                                 }
-                                            })
-                                            .addOnFailureListener(new OnFailureListener() {
-                                                @Override
-                                                public void onFailure(@NonNull Exception e) {
-                                                    // Error al guardar en Firestore
-                                                    Toast.makeText(RegisterActivity.this, "Error al guardar", Toast.LENGTH_SHORT).show();
-                                                }
-                                            });
+                                            }
+                                        });
+                                    }
                                 } else {
-                                    // Error al registrar al usuario
-                                    Toast.makeText(RegisterActivity.this, "Error al registrar", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(RegisterActivity.this, "Error al registrar: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
             }
-        });
 
+        });
     }
 }

@@ -13,7 +13,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="26dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -24,8 +24,7 @@
             android:id="@+id/textView5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Hola!"
-            android:textColor="#000000"
+            android:text="Hola,"
             android:textSize="34sp"
             android:textStyle="normal" />
 
@@ -34,20 +33,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:hint="Nombre"
-            android:textColor="#000000"
             android:textSize="34sp"
-            android:textStyle="normal" />
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/textView7"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Registro de tu semana"
+            android:text="Registro de tu día"
             android:textSize="16sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
             android:orientation="vertical">
@@ -69,6 +67,14 @@
 
             </LinearLayout>
 
+            <Button
+                android:id="@+id/btn_add_frag"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#52BF90"
+                android:text="@string/agregar_registro"
+                app:cornerRadius="10dp" />
+
             <Space
                 android:layout_width="match_parent"
                 android:layout_height="15dp" />
@@ -84,34 +90,33 @@
                 android:layout_width="match_parent"
                 android:layout_height="15dp" />
 
-            <Button
-                android:id="@+id/btn_close"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:backgroundTint="#da4f4a"
-                android:text="@string/cerrar_sesi_n"
-                app:cornerRadius="10dp" />
-
-            <Button
-                android:id="@+id/btn_add"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:backgroundTint="#00695C"
-                android:text="@string/button_perfil"
-                app:cornerRadius="10dp" />
-
-            <Button
-                android:id="@+id/btn_add_frag"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:backgroundTint="#4AAFCD"
-                android:text="@string/agregar_con_fragment"
-                app:cornerRadius="10dp" />
-
         </LinearLayout>
+
 
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="bottom|center"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#da4f4a"
+            android:text="@string/cerrar_sesi_n"
+            app:cornerRadius="10dp" />
+
+        <Button
+            android:id="@+id/btn_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#4AAFCD"
+            android:text="@string/button_perfil"
+            app:cornerRadius="10dp" />
+    </LinearLayout>
 
 
 </androidx.drawerlayout.widget.DrawerLayout>

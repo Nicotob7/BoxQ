@@ -36,6 +36,7 @@
     <string name="agregar">Agregar</string>
     <string name="toodooo" />
     <string name="button_perfil">button perfil</string>
+    <string name="agregar_registro">agregar registro</string>
 
     <string-array name="op_nombre">
         <item>Power Snatch </item>

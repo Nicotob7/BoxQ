@@ -83,37 +83,49 @@ public class LoginActivity extends AppCompatActivity {
                 String emailUser = email.getText().toString().trim();
                 String passUser = password.getText().toString().trim();
 
-                if (emailUser.isEmpty() && passUser.isEmpty()) {
-                    Toast.makeText(LoginActivity.this, "Ingresar los datos", Toast.LENGTH_SHORT).show();
-
-                } else {
+                // Verificar si alguno de los campos está vacío
+                if (emailUser.isEmpty() || passUser.isEmpty()) {
+                    Toast.makeText(LoginActivity.this, "Por favor, ingresa todos los datos", Toast.LENGTH_SHORT).show();
+                }
+                // Verificar si la contraseña tiene al menos 6 caracteres
+                else if (passUser.length() < 6) {
+                    Toast.makeText(LoginActivity.this, "La contraseña debe tener al menos 6 caracteres", Toast.LENGTH_SHORT).show();
+                }
+                // Si todos los campos están completos y la contraseña tiene al menos 6 caracteres, intentar iniciar sesión
+                else {
                     loginUser(emailUser, passUser);
-
                 }
             }
 
             private void loginUser(String emailUser, String passUser) {
-
-                mAuth.signInWithEmailAndPassword(emailUser, passUser).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            finish();
-                            startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                            Toast.makeText(LoginActivity.this, "Bienvenido", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(LoginActivity.this, "Error", Toast.LENGTH_SHORT).show();
-                        }
-
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(LoginActivity.this, "Error el iniciar sesión", Toast.LENGTH_SHORT).show();
-                    }
-                });
+                mAuth.signInWithEmailAndPassword(emailUser, passUser)
+                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (task.isSuccessful()) {
+                                    FirebaseUser user = mAuth.getCurrentUser();
+                                    if (user != null && user.isEmailVerified()) {
+                                        // Redirigir al usuario a la actividad principal
+                                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                                        finish(); // Finalizar la actividad actual para evitar que el usuario regrese a ella
+                                    } else {
+                                        // Si el correo electrónico no está verificado, mostrar un mensaje y no iniciar sesión automáticamente
+                                        Toast.makeText(LoginActivity.this, "Tu correo electrónico aún no está verificado", Toast.LENGTH_SHORT).show();
+                                    }
+                                } else {
+                                    Toast.makeText(LoginActivity.this, "Error al iniciar sesión", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(LoginActivity.this, "Error al iniciar sesión", Toast.LENGTH_SHORT).show();
+                            }
+                        });
             }
+
         });
+
 
         btn_register.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -166,6 +178,7 @@ public class LoginActivity extends AppCompatActivity {
                             map.put("id", userId);
                             map.put("name", user.getDisplayName());
                             map.put("profile", user.getPhotoUrl().toString());
+                            map.put("email", user.getEmail());
 
                             // Guardar los datos del usuario en Realtime Database
                             database.getReference().child("users").child(userId).setValue(map);
@@ -198,33 +211,15 @@ public class LoginActivity extends AppCompatActivity {
 
 
 
-    private void loginAnonymus() {
-                mAuth.signInAnonymously()
-                        .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()){
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                        }
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(LoginActivity.this, "Error al acceder", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-
-
     @Override
     protected void onStart() {
         super.onStart();
         FirebaseUser user = mAuth.getCurrentUser();
 
-        if (user != null){
+        if (user != null && user.isEmailVerified()){
             startActivity(new Intent(LoginActivity.this, MainActivity.class));
-            finish();
+            finish(); // Finalizar la actividad actual para evitar que el usuario regrese a ella
         }
     }
+
 }
