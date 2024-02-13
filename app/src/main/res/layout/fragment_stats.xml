@@ -4,15 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/gradient_background"
-    tools:context=".Fragments_menu.ShortsFragment">
+    tools:context=".Fragments_menu.Stats">
 
     <!-- TODO: Update blank fragment layout -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Perfil"
+        android:text="Progreso"
         android:gravity="center"
         android:textSize="30dp"
         android:textColor="@color/white"/>
-
 </FrameLayout>

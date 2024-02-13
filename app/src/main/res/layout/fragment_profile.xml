@@ -4,14 +4,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/gradient_background"
-    tools:context=".Fragments_menu.SubscriptionFragment">
+    tools:context=".Fragments_menu.Profile">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Progreso"
-        android:gravity="center"
-        android:textSize="30dp"
-        android:textColor="@color/white"/>
+        android:layout_margin="20dp"
+        android:orientation="vertical"></LinearLayout>
 </FrameLayout>
