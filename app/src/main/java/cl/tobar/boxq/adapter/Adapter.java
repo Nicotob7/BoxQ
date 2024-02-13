@@ -55,11 +55,6 @@ public class Adapter extends FirestoreRecyclerAdapter<Box, Adapter.ViewHolder>{
         viewHolder.repe.setText(box.getRepe());
         viewHolder.mod.setText(box.getMod());
 
-        viewHolder.btn_more.setOnClickListener(view -> {
-            Intent intent = new Intent(activity, More.class);
-
-            activity.startActivity(intent);
-        });
 
         //Método para editar
         viewHolder.btn_edit.setOnClickListener(v -> {
@@ -99,7 +94,6 @@ public class Adapter extends FirestoreRecyclerAdapter<Box, Adapter.ViewHolder>{
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView name, repe, weight, mod;
 
-        Button btn_more;
 
         ImageView btn_delete, btn_edit;
 
@@ -112,7 +106,6 @@ public class Adapter extends FirestoreRecyclerAdapter<Box, Adapter.ViewHolder>{
             weight = itemView.findViewById(R.id.weight);
             mod = itemView.findViewById(R.id.modalidad);
 
-            btn_more = itemView.findViewById(R.id.btn_mas);
             btn_delete = itemView.findViewById(R.id.btn_eliminar);
             btn_edit = itemView.findViewById(R.id.btn_editar);
         }
