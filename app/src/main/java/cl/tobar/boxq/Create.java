@@ -3,6 +3,8 @@ package cl.tobar.boxq;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -29,7 +31,6 @@ public class Create extends AppCompatActivity {
         setContentView(R.layout.activity_create);
 
         //Titulo del layout + boton para retroceder a home
-        this.setTitle("Agregar ejercicio");
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         String id = getIntent().getStringExtra("id_ejer");
@@ -43,7 +44,7 @@ public class Create extends AppCompatActivity {
 
         btn_agregar = findViewById(R.id.btn_agregar);
 
-        if (id == null || id.equals("")){
+        if (id == null || id.equals("")) {
             //Si se hace click en el boton de agregar se ejecuta esto, si es nulo se crea
             btn_agregar.setOnClickListener(view -> {
                 String name_box = name.getText().toString().trim();
@@ -59,7 +60,7 @@ public class Create extends AppCompatActivity {
                 }
             });
             //Es el caso contrario, se actualiza la informacion
-        }else {
+        } else {
             btn_agregar.setText("Actualizado");
             getBox(id);
             btn_agregar.setOnClickListener(new View.OnClickListener() {
@@ -95,14 +96,14 @@ public class Create extends AppCompatActivity {
                 }
 
             });
-            }
-
         }
+
+    }
 
     private void postBox(String name_pet, String color_pet, String weight_box, String mod_box) {
 
         //Se crea map para pasarle todos los datos y asi crearlos en la DB
-        Map <String, Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
         map.put("name", name_pet);
         map.put("color", color_pet);
         map.put("weight", weight_box);
@@ -120,7 +121,7 @@ public class Create extends AppCompatActivity {
     }
 
     //Obtiene los datos de la db
-    private void getBox(String id){
+    private void getBox(String id) {
         mfirestore.collection("Pet").document(id).get().addOnSuccessListener(documentSnapshot -> {
             String namePet = documentSnapshot.getString("name");
             String weightbox = documentSnapshot.getString("weight");
@@ -137,12 +138,14 @@ public class Create extends AppCompatActivity {
 
     @Override
     public boolean onSupportNavigateUp() {
-        finish(); // Cierra la actividad actual
+        // Antes de finalizar la actividad, envía una señal a MainActivity
+        Intent intent = new Intent();
+        intent.putExtra("RETURN_TO_HOME", true);
+        setResult(Activity.RESULT_OK, intent);
+
+        // Finaliza la actividad
+        finish();
         return super.onSupportNavigateUp();
     }
 }
 
-
-//Sacare esta ventana seguramente
-
-//Aca podria hacer un validador con el numero de celular o podria ser con el correro para que no se creen cuentas de mas

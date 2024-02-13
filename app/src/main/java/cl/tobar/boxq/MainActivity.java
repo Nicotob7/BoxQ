@@ -7,12 +7,15 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -28,12 +31,18 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
 
+import cl.tobar.boxq.Fragments_menu.HomeFragment;
+import cl.tobar.boxq.Fragments_menu.LibraryFragment;
+import cl.tobar.boxq.Fragments_menu.ShortsFragment;
+import cl.tobar.boxq.Fragments_menu.SubscriptionFragment;
 import cl.tobar.boxq.adapter.Adapter;
+import cl.tobar.boxq.databinding.ActivityMainBinding;
 import cl.tobar.boxq.model.Box;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button btn_add, btn_add_frag, btn_exit;
+    Button btn_add, btn_exit;
+    FloatingActionButton btn_add_frag;
     RecyclerView mRecycler;
     Adapter mAdapter;
     FirebaseFirestore mFirestore;
@@ -41,12 +50,52 @@ public class MainActivity extends AppCompatActivity {
     Query query;
 
     TextView date, name_user;
+    ActivityMainBinding binding;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
+        replaceFragment(new HomeFragment());
+        binding.bottomNavigationView.setBackground(null);
+
+        binding.bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
+            Fragment fragment = null;
+            switch (item.getItemId()) {
+                case R.id.home:
+                    fragment = getSupportFragmentManager().findFragmentByTag("HomeFragment");
+                    if (fragment == null) {
+                        fragment = new HomeFragment();
+                    }
+                    break;
+                case R.id.profile:
+                    fragment = getSupportFragmentManager().findFragmentByTag("ShortsFragment");
+                    if (fragment == null) {
+                        fragment = new ShortsFragment();
+                    }
+                    break;
+                case R.id.stats:
+                    fragment = getSupportFragmentManager().findFragmentByTag("SubscriptionFragment");
+                    if (fragment == null) {
+                        fragment = new SubscriptionFragment();
+                    }
+                    break;
+                case R.id.config:
+                    fragment = getSupportFragmentManager().findFragmentByTag("LibraryFragment");
+                    if (fragment == null) {
+                        fragment = new LibraryFragment();
+                    }
+                    break;
+            }
+
+            if (fragment != null) {
+                replaceFragment(fragment);
+            }
+            return true; // Devuelve true para indicar que se ha manejado la selección del elemento
+        });
 
 
         date = findViewById(R.id.dia);
@@ -81,6 +130,14 @@ public class MainActivity extends AppCompatActivity {
 
         // Escuchar cambios en el nombre del usuario
         listenToUserName();
+    }
+
+    private void replaceFragment(Fragment fragment){
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.frame_layout, fragment);
+        fragmentTransaction.commit();
+
     }
 
     private void updateDateTextView() {
