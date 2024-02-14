@@ -64,33 +64,10 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:background="#120027EA"
+                    android:background="@drawable/round_back_whiite10_20"
                     android:gravity="center"
                     android:text="@string/dia" />
 
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="bottom|center"
-                android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/btn_close"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="#da4f4a"
-                    android:text="@string/cerrar_sesi_n"
-                    app:cornerRadius="10dp" />
-
-                <Button
-                    android:id="@+id/btn_add"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="#4AAFCD"
-                    android:text="@string/button_perfil"
-                    app:cornerRadius="10dp" />
             </LinearLayout>
 
             <Space
@@ -100,7 +77,9 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerViewSingle"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:background="@drawable/round_back_whiite10_20"
+                android:padding="5dp">
 
             </androidx.recyclerview.widget.RecyclerView>
 

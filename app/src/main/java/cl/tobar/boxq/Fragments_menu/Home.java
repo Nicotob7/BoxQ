@@ -39,7 +39,7 @@ import cl.tobar.boxq.model.Box;
 
 public class Home extends Fragment {
 
-    private Button btn_add, btn_exit;
+
     private RecyclerView mRecycler;
     private Adapter mAdapter;
     private FirebaseFirestore mFirestore;
@@ -47,7 +47,6 @@ public class Home extends Fragment {
     private Query query;
 
     private TextView date, name_user;
-    private ActivityMainBinding binding;
 
     @Nullable
     @Override
@@ -60,20 +59,6 @@ public class Home extends Fragment {
         mFirestore = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
 
-        //Button malo
-        btn_add = view.findViewById(R.id.btn_add);
-        btn_exit = view.findViewById(R.id.btn_close);
-
-        //Cuando se hace click se abre la nueva actividad
-        btn_add.setOnClickListener(v -> startActivity(new Intent(requireActivity(), Create.class)));
-
-
-        //Cerrar sesion manda al Login
-        btn_exit.setOnClickListener(v -> {
-            mAuth.signOut();
-            requireActivity().finish();
-            startActivity(new Intent(requireActivity(), LoginActivity.class));
-        });
 
         //Escuchar cambios en el nombre del usuario
         listenToUserName();
@@ -87,20 +72,20 @@ public class Home extends Fragment {
     private void setUpRecyclerView(View rootView) {
         mRecycler = rootView.findViewById(R.id.recyclerViewSingle);
         mRecycler.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mRecycler.setItemAnimator(null);
 
-        // Obtener la fecha actual
+
+        //Obtener la fecha actual
         Date currentDate = Calendar.getInstance().getTime();
 
-        // Formatear la fecha si es necesario
+        //Formatear la fecha si es necesario
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         String formattedDate = dateFormat.format(currentDate);
 
         // ID del usuario actualmente autenticado en la APP
         String userId = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
 
-        // Filtra la colección del usuario actual (por su id), excluye el documento "profile"
-        // y solo trae los documentos con la fecha actual
+        //Filtra la colección del usuario actual (por su id), excluye el documento "profile"
+        //y solo trae los documentos con la fecha actual
         query = mFirestore.collection(userId)
                 .document("Ejercicios")
                 .collection("Ejercicios")

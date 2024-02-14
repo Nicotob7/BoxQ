@@ -14,5 +14,13 @@
         <!-- Customize your theme here. -->
 
     </style>
+    
+    <style name="nightModeSwitch" parent="Theme.AppCompat.Light">
+        
+        <item name="colorControlActivated">@color/night_mode</item>
+        <item name="colorSwitchThumbNormal">#FFFF</item>
+        <item name="android:colorForeground">#99FFFF</item>
+        
+    </style>
 
 </resources>
