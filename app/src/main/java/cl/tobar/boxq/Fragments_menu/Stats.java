@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import cl.tobar.boxq.R;
 import cl.tobar.boxq.adapter.CardAdapter;
 
-
 public class Stats extends Fragment {
 
     @Override

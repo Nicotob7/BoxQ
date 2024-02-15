@@ -35,7 +35,7 @@
                     android:text="Movimiento: " />
 
                 <TextView
-                    android:id="@+id/nombre"
+                    android:id="@+id/text_view_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Nombre"
@@ -102,7 +102,7 @@
                             android:text="Modalidad:" />
 
                         <TextView
-                            android:id="@+id/modalidad"
+                            android:id="@+id/modo"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"

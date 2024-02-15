@@ -1,11 +1,9 @@
 package cl.tobar.boxq.Fragments_menu;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -30,11 +28,8 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
 
-import cl.tobar.boxq.Create;
-import cl.tobar.boxq.LoginActivity;
 import cl.tobar.boxq.R;
 import cl.tobar.boxq.adapter.Adapter;
-import cl.tobar.boxq.databinding.ActivityMainBinding;
 import cl.tobar.boxq.model.Box;
 
 public class Home extends Fragment {
@@ -54,7 +49,6 @@ public class Home extends Fragment {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         date = view.findViewById(R.id.dia);
         name_user = view.findViewById(R.id.name_user);
-        //setUpRecyclerView(view);
 
         mFirestore = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
@@ -107,26 +101,18 @@ public class Home extends Fragment {
 
     //Actualiza el TextView con el día de la semana, el día del mes y el nombre del mes
     private void updateDateTextView(Calendar calendar) {
-        //Se obtenemos el día de la semana actual y el día del mes
+        // Obtenemos el nombre del día de hoy en español
+        String[] dayNames = new String[]{"domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"};
         int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+        String dayName = dayNames[dayOfWeek - 1]; // Restamos 1 porque los días de la semana en Calendar empiezan desde 1
+
+        // Obtenemos el día del mes
         int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
 
-        //Calcula el número del día lunes y el día domingo (Para decir semana desde tanto tanto)
-        int mondayDayOfMonth = dayOfMonth - (dayOfWeek - Calendar.MONDAY);
-        int sundayDayOfMonth = dayOfMonth + (Calendar.SUNDAY - dayOfWeek + (dayOfWeek == Calendar.MONDAY ? 0 : 7));
-
-        //Nombre del mes
-        String monthName = getMonthName(calendar.get(Calendar.MONTH));
-
-        //Texto en el TextView (dia)
-        date.setText("Semana del " + mondayDayOfMonth + " - al " + sundayDayOfMonth + " de " + monthName);
+        // Actualizamos el TextView con el nombre del día y el número del día
+        date.setText("Hoy es " + dayName + ", " + dayOfMonth);
     }
 
-    //Método para obtener el nombre del mes (De seguro hay algo mas facil)
-    private String getMonthName(int month) {
-        String[] monthNames = new String[]{"enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"};
-        return monthNames[month];
-    }
 
     @Override
     public void onStart() {

@@ -1,14 +1,10 @@
 package cl.tobar.boxq.adapter;
 
-import static androidx.core.content.ContextCompat.startActivity;
-
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,7 +20,6 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import cl.tobar.boxq.CreateFragment;
-import cl.tobar.boxq.More;
 import cl.tobar.boxq.R;
 import cl.tobar.boxq.model.Box;
 
@@ -101,10 +96,10 @@ public class Adapter extends FirestoreRecyclerAdapter<Box, Adapter.ViewHolder>{
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            name = itemView.findViewById(R.id.nombre);
+            name = itemView.findViewById(R.id.text_view_name);
             repe = itemView.findViewById(R.id.repe);
             weight = itemView.findViewById(R.id.weight);
-            mod = itemView.findViewById(R.id.modalidad);
+            mod = itemView.findViewById(R.id.modo);
 
             btn_delete = itemView.findViewById(R.id.btn_eliminar);
             btn_edit = itemView.findViewById(R.id.btn_editar);
